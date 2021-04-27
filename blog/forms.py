@@ -1,10 +1,10 @@
 from django import forms
-from .models import Post, Category, Comment
+from .models import Post, Comment
 
 class PostForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ('title', 'title_tag', 'header_image', 'author', 'category', 'body', 'snippet')
+        fields = ('title', 'header_image', 'author', 'body')
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
@@ -16,7 +16,7 @@ class PostForm(forms.ModelForm):
 class EditForm(forms.ModelForm):
     class Meta:
         model = Post
-        fields = ('title', 'title_tag','body','snippet')
+        fields = ('title','body')
 
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your name'}),
