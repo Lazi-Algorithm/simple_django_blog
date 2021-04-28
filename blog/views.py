@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Post, Comment
+from django.contrib.auth.views import PasswordChangeView
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.urls import reverse, reverse_lazy
-from .forms import PostForm, EditForm, CommentForm
+from .forms import PostForm, EditForm, CommentForm, PasswordChangingForm, UserRegistrationForm
 from django.http import HttpResponseRedirect
 
 
@@ -10,6 +11,7 @@ from django.http import HttpResponseRedirect
 # Creating Home and detailed view using class-based view
 class HomeView(ListView):
     model = Post
+    context_object_name = "posts"
     template_name = "home.html"
     ordering = ['-post_date']
 
@@ -29,6 +31,8 @@ class PostDetailView(DetailView):
     template_name = "post_details.html"
     
     def get_context_data(self, *args, **kwargs):
+        context = super(PostDetailView, self).get_context_data(
+            *args, **kwargs)
         post = get_object_or_404(Post, id=self.kwargs['pk']) #This is to get a particular post
         total_likes = post.total_likes() 
         
@@ -67,3 +71,26 @@ class AddCommentView(CreateView):
 
 
     success_url = reverse_lazy('home')    
+    
+
+
+class UserRegisterView(CreateView):
+    form_class = UserRegistrationForm
+    template_name = 'registration/register.html'
+    success_url = reverse_lazy('login')
+
+# class UserEditView(UpdateView):
+#     form_class = EditForm
+#     template_name = 'registration/edit_profile.html'   
+#     success_url = reverse_lazy('home')
+     
+#     def get_object(self):
+#         return self.request.user
+    
+class PasswordsChangeView(PasswordChangeView):
+    form_class= PasswordChangingForm
+    template_name = 'registration/change_password.html'
+    success_url = reverse_lazy('password_success')
+
+def password_success(request):
+    return render(request, 'registration/password_success.html', {} )
